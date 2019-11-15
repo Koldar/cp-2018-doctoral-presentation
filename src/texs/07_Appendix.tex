@@ -1,0 +1,149 @@
+\section*{}
+
+\begin{frame}[noframenumbering]{\DPASAT{} Pseudocode}
+
+	{\scriptsize
+	\textbf{Input:} The \tlGraph{} $\graph{}$ of an inconsistent CSP $\csp{}$ over PA; The set $\fsccs{}$ of flawed SCCs in $\graph{}$; A constraint relaxation $vR'w$ of a constraint $vRw \in \csp{}$ %($R' \supset R \in \{\sQuote{<}, \sQuote{\leq}, \sQuote{\noteq}\}$);
+			
+	\textbf{Output:} \true if $\csp{}' = \csp{} - \{vRw\} \cup \{vR'w\}$ is consistent; the pair $\tuple{\graph{}', \fsccs{}'}$, where $\graph{}'$ is the \tlGraph{} of $\csp{}'$ and $\fsccs{}'$ is the set of flawed SCCs in $\graph{}'$, otherwise.
+	}
+
+	\begin{figure}
+	\centering
+	\scalebox{0.65}{
+	\begin{algorithm}[H]
+		%options
+		\SetAlgoLined
+		\LinesNumbered
+		\SetNlSty{}{}{:}
+		\SetAlgoNlRelativeSize{1}
+		\SetAlgoNoEnd
+		\DontPrintSemicolon
+		\SetArgSty{}
+		\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+		\SetSideCommentRight
+		\SetKwComment{Comment}{$\triangleright$}{}
+		%algorithm start
+		\BlankLine
+		\leIf{$R' = \sQuote{\top}$}{
+			$\graph{}' \leftarrow \graph{} \setminus \{\edge{v}{R}{w}\}$
+		}{
+			$\graph{}' \leftarrow \graph{} \setminus \{\edge{v}{R}{w}\} \cup \{\edge{v}{R'}{w}\}$
+		}
+		\lIf{$v$ and $w$ are not both in a SCC of $\fsccs{}$} {
+			\Return $\tuple{\graph{}', \fsccs{}}$
+		}
+		$\scc{} \leftarrow \mbox{the SCC in }\fsccs{}\mbox{ containing }v\mbox{ and }w$; $\;$ $\fsccs{}' \leftarrow \fsccs{}$\;
+		\If(\Comment*[f]{$R$ = $\sQuote{\leq}$, $R'$ = $\sQuote{\top}$}){$R = \sQuote{\leq}$}{
+			$\fsccs{}' \leftarrow (\fsccs{}' - \{\scc{}\}) \, \cup$ \small{\texttt{FlawedSCCs}}($\induced{\scc{}}{ \graph{}'}$, $v$, $w$)
+		} \ElseIf(\Comment*[f]{$R$ = $\sQuote{<}$, $R'{\in} \set{\sQuote{\leq}, \sQuote{\noteq}, \sQuote{\top}}$}){$R = \sQuote{<}$}{
+			remove $\tuple{v,w}$ from $\elt[\scc{}]$ \;
+			\If(\Comment*[f]{$R$ = $\sQuote{<}$, $R'$ = $\sQuote{\noteq}$}){$R' = \sQuote{\noteq}$}{
+				add $\tuple{v,w}$ to $\eneq[\scc{}]$
+			} 
+			\If(\Comment*[f]{$R$ = $\sQuote{<}$, $R' {\in} \set{\sQuote{\leq}, \sQuote{\top}}$}){$|\elt[\scc{}]|+|\eneq[\scc{}]|=0$}{
+			 	$\fsccs{}' \leftarrow \fsccs{}' \setminus \set{\scc{}}$ \;
+			} \ElseIf(\Comment*[f]{$R$ = $\sQuote{<}$, $R' {\in} \{\sQuote{\noteq}, \sQuote{\top}\}$}){$R' \in \{\sQuote{\noteq}, \sQuote{\top}\}$}{
+				$\fsccs{}' \leftarrow (\fsccs{}' - \{\scc{}\}) \, \cup$ \small{\texttt{FlawedSCCs}}($\induced{\scc{}}{\graph{}'}$, $v$, $w$) \;
+			}
+		} \Else(\Comment*[f]{$R$ = $\sQuote{\noteq}$, $R'$ = $\sQuote{\top}$}) {
+			remove $\tuple{v,w}$ from $\eneq[\scc{}]$ \;
+			\lIf{$|\elt[\scc{}]| + |\eneq[\scc{}]| = 0$}{
+				$\fsccs{}' \leftarrow \fsccs{}' \setminus \{\scc{}\}$
+			 }
+		}			
+		\leIf{$|\fsccs{}'| > 0$} {
+			\Return $\tuple{\graph{}', \fsccs{}'}$
+		}{
+			\Return \true
+		}
+	\end{algorithm}
+	}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}[noframenumbering]{\DPASAT{} pseudocode}
+	
+	{\scriptsize
+	\textbf{Input:} A \tlGraph{} $\subgraphvar{}$ and two vertices $v$ and $w$ in $\subgraphvar{}$;
+			
+	\textbf{Output:} The set of flawed SCCs in $\subgraphvar{}$.
+	}
+	
+	\begin{figure}[t]
+		\centering
+		\scalebox{0.8}{
+			\begin{algorithm}[H]
+				%options
+				\SetAlgorithmName{\thefunctionsname}{}{}
+				\SetAlgoLined
+				\LinesNumbered
+				\SetNlSty{}{}{:}
+				\SetAlgoNlRelativeSize{1}
+				\SetAlgoNoEnd
+				\SetArgSty{}
+				\DontPrintSemicolon
+				\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+				%algorithm start
+				\BlankLine
+				$\scc{}' \leftarrow $ set of vertices in $\subgraphvar{}$\;
+				\lIf{$\subgraphvar{}$ has a directed path from $v$ to $w$}{
+					\Return $\{ \scc{}' \}$
+				}
+				compute the set $\sccsubsetvar{\subgraphvar{}}$ of all SCCs in $\subgraphvar{}$ \;
+				$\scc{}_{\textit new} \leftarrow \emptyset$ \;
+				\ForEach{$\scc{}_{\subgraphvar{}} \in \sccsubsetvar{\subgraphvar{}}$}{
+					compute $\elt[\scc{}_{\subgraphvar{}}]$ and $\eneq[\scc{}_{\subgraphvar}]$ \;
+					\If{$|\elt[\scc{}_{\subgraphvar{}}]| + |\eneq[\scc{}_{\subgraphvar{}}]| > 0$}{
+						$\fsccs{}_{\textit new} \leftarrow \fsccs{}_{\textit new} \cup \{\scc{}_{\subgraphvar{}}\}$ \;
+					}
+				}
+				\Return $\fsccs{}_{\textit new}$
+			\end{algorithm}
+		}
+	\end{figure}	
+	
+\end{frame}
+
+\begin{frame}[noframenumbering]{\DOHSAT{} identification of subchain}
+
+	A constraint relaxation $xR'y$ of constraint $xRy$ might \textit{invalidate} $\epoch{}$ if:
+	
+	\begin{enumerate}
+		\item $\pi(xR'y)$ revises a constraint $v\leq w$ of $\pi(xRy)$ into $v \top w$ (a SCC used to reduce a $p \noteq q$ clause is no more);
+		\item $\pi(xR'y)$ remove a disjunction $\delta$ of $\pi(xRy)$ that is reduced in $\chain{}$ (a reduction is not applicable anymore);
+	\end{enumerate}
+
+	\textbf{SCC Fusion Matrix} (\texttt{SFM}): $n$ rows and $n$ columns ($n$ = number of variables in $\SigmaOne{}$). Rows: index of $\epoch{}$; Columns: index of a $\SigmaOne{}$ variable; $\texttt{SFM}[i,j]$: id of the SCC containing the variable $j$ before reducing the clauses in epoch $i$;
+	
+	\begin{figure}[t]
+		\centering
+		\begin{subfigure}[t]{0.36\linewidth}
+			\scriptsize
+			\setlength\tabcolsep{1.5pt} % default value: 6pt
+			\centering
+			\begin{tabular}{l|c|c|c|c|c|c|c|c|} \cline{2-9}
+				\multirow{1}{*}{}					 		&	{}									& $v_1$	& $v_2$	& $v_3$	& $v_4$	& $v_5$ & $v_6$	& $...$	\\ \cline{2-9}
+				\multirow{1}{*}{} 							&	$\epoch{}_1$						& 1		& 1 	& 2 	& 3		& 4		& 5		& $...$ \\ \cline{2-9}
+				\multirow{1}{*}{$10 \in \Delta_2$}	&	$\epoch{}_2$						& 10 	& 10 	& 10 	& 11	& 12	& 13	& $...$ \\ \cline{2-9}
+				%\multirow{1}{*}{} 							&	$\epochVar_3$						& 18 	& 18 	& 18 	& 18	& 19	& 20	& $...$ \\ \cline{2-9}
+				\multirow{1}{*}{} 							&	$...$								& $...$	& $...$	& $...$	& $...$	& $...$	& $...$	& $...$	\\ \cline{2-9}
+				\multirow{1}{*}{ } 							&	$\epoch{}_{|\chain{\csp{}}|}$	& 36 	& 36 	& 36 	& 36 	& 36	& 37	& $...$ \\ \cline{2-9}
+			\end{tabular}
+		\end{subfigure}\quad%
+		\begin{subfigure}[t]{0.36\linewidth}
+			\scriptsize
+			\setlength\tabcolsep{1.6pt} % default value: 6pt
+			\centering
+			\begin{tabular}{l}
+				$v_1 \leq v_6 \in \piOne[xRy]$ \\
+				$v_2 \leq v_3 \in \piOne[xRy]$ \\
+				\vspace{0.001cm}\\
+				$v_1 \top v_6 \in \piOne[xR'y]$ \\
+				$v_2 \top v_3 \in \piOne[xR'y]$ \\
+			\end{tabular}
+		\end{subfigure}
+	\end{figure}
+
+\end{frame}

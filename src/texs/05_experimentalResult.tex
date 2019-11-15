@@ -1,0 +1,121 @@
+\section{Experiments}
+
+\subsection{}
+\begin{frame}{Benchmarks}
+
+	\begin{itemize}
+		\item Randomly generated inconsistent CSPs over PA and ORD-Horn (either \textit{sparse} or \textit{dense});
+		\item inconsistent CSPs over PA generated from ZenoTravel planning instances (plans);
+		\item relaxation policies:
+			\begin{itemize}
+				\item \textbf{RR}: random relaxations of a randomly chosen constraint;
+				\item \textbf{RFSCC}: random relaxations of a constraint between time variables in the same flawed SCC.
+			\end{itemize}
+	\end{itemize}
+
+\end{frame}
+
+\subsection{}
+\begin{frame}{\DPASAT{} vs. van Beek}
+	\framesubtitle{Randomly generated \textit{dense} CSPs with long relaxation sequences}
+    
+    \begin{columns}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.COMPLETE.RELAXALL.REFSCC.meantimes.given.size.logy.linearx}}}
+    	\end{column}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.COMPLETE.RELAXALL.REG.meantimes.given.size.logy.linearx}}}
+    	\end{column}   	
+    \end{columns} 
+    \begin{columns}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.COMPLETE.RELAXALL.REFSCC.meantimes.given.relax.logy.cumulativex}}}
+    	\end{column}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.COMPLETE.RELAXALL.REG.meantimes.given.relax.logy.cumulativex}}}
+    	\end{column}
+    \end{columns} 
+\end{frame}
+
+\subsection{}
+\begin{frame}{\DPASAT{} vs. van Beek}
+	\framesubtitle{Randomly generated \textit{sparse} CSPs with long relaxation sequences}
+    
+    \begin{columns}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.SPARSE.RELAXALL.REFSCC.meantimes.given.size.logy.linearx}}}
+    	\end{column}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.SPARSE.RELAXALL.REG.meantimes.given.size.logy.linearx}}}
+    	\end{column}    	
+    \end{columns} 
+    \begin{columns}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.SPARSE.RELAXALL.REFSCC.meantimes.given.relax.logy.cumulativex}}}
+    	\end{column}
+    	\begin{column}{0.45\textwidth}
+    		\includegraphics[width=1.0\textwidth]{{{dpasat/a1.SPARSE.RELAXALL.REG.meantimes.given.relax.logy.cumulativex}}}
+    	\end{column}	
+    \end{columns} 
+\end{frame}
+
+\subsection{}
+\begin{frame}{\DOHSAT{} vs. \OHSAT{} and \texttt{PC}}
+	\framesubtitle{Randomly generated CSPs over long relaxation sequences}
+	
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dohsat/a1.SPARSE.RELAXALL.ALLRELATIONS_RANDOM_meantimes_given_size_logy_linearx}}}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dohsat/a1.COMPLETE.RELAXALL.ALLRELATIONS_RANDOM_meantimes_given_size_logy_linearx}}}
+		\end{column}
+	\end{columns}
+	
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dohsat/a1.SPARSE.RELAXALL.ALLRELATIONS_RANDOM_meantimes_given_relax_logy_cumulativex}}}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dohsat/a1.COMPLETE.RELAXALL.ALLRELATIONS_RANDOM_meantimes_given_relax_logy_cumulativex}}}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\subsection{}
+\begin{frame}{\DPASAT{} vs. van Beek}
+	\framesubtitle{Randomly generated CSPs with short relaxation sequences}
+	
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dpasat/a1.SPARSE.RELAX05PERC.REG.meantimes.given.size.lineary.linearx}}}
+		\end{column}\hfill
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dpasat/a1.COMPLETE.RELAX02PERC.REG.meantimes.given.size.lineary.linearx}}}
+		\end{column}
+	\end{columns}
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dpasat/a1.SPARSE.RELAX05PERC.REFSCC.meantimes.given.size.lineary.linearx}}}
+		\end{column}\hfill
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dpasat/a1.COMPLETE.RELAX02PERC.REFSCC.meantimes.given.size.lineary.linearx}}}
+		\end{column}
+	\end{columns}
+	
+\end{frame}
+
+\subsection{}
+\begin{frame}{\DPASAT{} vs. van Beek}
+	\framesubtitle{ZenoTravel CSPs with short relaxations sequences}
+	
+	\begin{columns}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dpasat/a1.ZENOTRAVEL.1PERCRELAX.REG.meantimes.given.size.lineary.linearx}}}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\includegraphics[width=1.0\textwidth]{{{dpasat/a1.ZENOTRAVEL.1PERCRELAX.REFSCC.meantimes.given.size.lineary.linearx}}}
+		\end{column}
+	\end{columns}
+	
+\end{frame}

@@ -1,0 +1,53 @@
+\tikzstyle{vertex} = [
+	shape=circle,  
+	draw=blue!50, %draw the border to the node
+	fill=blue!20, %fill the space of the node
+	thick,
+	minimum size=4mm, %minimum size of the nodes
+	distance=1cm
+];
+\pgfarrowsdeclare{directEdge}{directEdge}{%
+	\arrowsize=0.2pt
+	\advance\arrowsize by .5\pgflinewidth
+	\pgfarrowsleftextend{-4\arrowsize-.5\pgflinewidth}
+	\pgfarrowsrightextend{.5\pgflinewidth}
+}{%
+	\arrowsize=1pt
+	\advance\arrowsize by .5\pgflinewidth
+	\pgfsetdash{}{0pt} % do not dash
+	\pgfsetroundjoin % fix join
+	\pgfsetroundcap % fix cap
+	\pgfpathmoveto{\pgfpointorigin}
+	\pgfpathlineto{\pgfpoint{-6\arrowsize}{2.2\arrowsize}}
+	\pgfpathlineto{\pgfpoint{-6\arrowsize}{-2.2\arrowsize}}
+	\pgfpathclose
+	\pgfusepathqfill
+}
+
+
+\begin{scope}[shift={(0,0)}]
+	\node[vertex](a) at (0,0) {1};
+	\node[vertex](b) at (+2,-1.5) {2};
+	\node[vertex](c) at (+5,+1.5) {3};
+	\node[vertex](d) at (+8,+3.5) {4};
+	\node[vertex](e) at (+8,+1.5) {5};
+	\node[vertex](f) at (+8,-3) {6};
+	\node[vertex](g) at (+4,-3) {7};
+	\node[vertex](h) at (+6,-3) {8};
+	\node[vertex](i) at (+2,+1.5) {9};
+\end{scope}
+
+\draw [-directEdge] (a) to node[auto,font=\large] {$\leq$} (b);
+\draw [-directEdge] (a) to node[auto,font=\large] {$\leq$} (i);
+\draw [-directEdge] (b) to node[auto,font=\large] {$\leq$} (c);
+\draw [-directEdge] (b) to node[auto,font=\large] {$\leq$} (g);
+\draw [-directEdge] (c) to node[auto,font=\large] {$\leq$} (d);
+\draw [-directEdge] (c) to node[auto,font=\large] {$\leq$} (e);
+\draw [-directEdge] (c) to node[auto,font=\large] {$\leq$} (f);
+\draw [-directEdge] (d) to node[auto,font=\large] {$\leq$} (e);
+\draw [-directEdge,bend left=60] (d) to[] node[auto,font=\large,bend left=60,xshift=-18] {$\leq$} (f);
+\draw [-directEdge] (e) to node[auto,font=\large] {$<$} (f);
+\draw [-.]          (h) to node[auto,font=\large] {$\not =$} (f);
+\draw [-directEdge] (g) to node[auto,font=\large] {$\leq$} (h);
+\draw [-directEdge] (i) to node[auto,font=\large] {$<$} (c);
+

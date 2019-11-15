@@ -1,0 +1,63 @@
+\tikzstyle{vertex} = [
+	shape=circle,  
+	draw=blue!50, %draw the border to the node
+	fill=blue!20, %fill the space of the node
+	thick,
+	minimum size=4mm, %minimum size of the nodes
+	distance=1cm
+];
+\pgfarrowsdeclare{directEdge}{directEdge}{%
+	\arrowsize=0.2pt
+	\advance\arrowsize by .5\pgflinewidth
+	\pgfarrowsleftextend{-4\arrowsize-.5\pgflinewidth}
+	\pgfarrowsrightextend{.5\pgflinewidth}
+}{%
+	\arrowsize=1pt
+	\advance\arrowsize by .5\pgflinewidth
+	\pgfsetdash{}{0pt} % do not dash
+	\pgfsetroundjoin % fix join
+	\pgfsetroundcap % fix cap
+	\pgfpathmoveto{\pgfpointorigin}
+	\pgfpathlineto{\pgfpoint{-6\arrowsize}{2.2\arrowsize}}
+	\pgfpathlineto{\pgfpoint{-6\arrowsize}{-2.2\arrowsize}}
+	\pgfpathclose
+	\pgfusepathqfill
+}
+
+\begin{scope}[scale=1.0,shift={(-3,0)}]
+	\node[vertex](Tw) at (60:2.0cm) {Tw};
+	\node[vertex](Mu) at (180:2.0cm) {Mu};
+	\node[vertex](Ch) at (-60:2.0cm) {Ch};
+\end{scope}
+
+\begin{scope}[scale=1.0,shift={(3,0)}]
+	\node[vertex](Lu) at (180:2.0cm) {Lu};
+	\node[vertex](Ca) at (-60:2.0cm) {Ca};
+	\node[vertex](Te) at (+60:2.0cm) {Te};
+\end{scope}
+
+\begin{scope}[scale=1.0,shift={(3,-2)}]
+	\node[vertex](Ga) at (180:2.0cm) {Ga};
+\end{scope}
+
+%mandatory constraints
+\draw [-directEdge,line width=2pt] (Tw) to[] node[pos=0.5,xshift=+0pt,yshift=10pt] {\textbf{All}} (Lu);
+\draw [-directEdge,line width=2pt] (Ch) to[] node[pos=0.3,xshift=+0pt,yshift=10pt] {\textbf{All}} (Lu);
+\draw [-directEdge,line width=2pt] (Mu) to[] node[pos=0.2,xshift=+0pt,yshift=10pt] {\textbf{All}} (Lu);
+
+\draw [-directEdge,line width=2pt] (Lu) to[] node[pos=0.5,xshift=+0pt,yshift=10pt] {\textbf{All}} (Te);
+\draw [-directEdge,line width=2pt] (Lu) to[] node[pos=0.7,xshift=+0pt,yshift=10pt] {\textbf{All}} (Ca);
+
+%first tourist
+\draw [-directEdge,color=red,line width=2pt] (Tw) to[color=red] node[pos=0.4,xshift=+0pt,yshift=14pt] {\textbf{T1}} (Ga);
+\draw [-directEdge,color=red,line width=2pt] (Ga) to[color=red] node[pos=0.5,xshift=+0pt,yshift=7pt] {\textbf{T1}} (Ca);
+\draw [-directEdge,dashed,color=red,line width=2pt] (Ca) to[color=red] node[pos=0.5,xshift=-10pt,yshift=0pt] {\textbf{T1}} (Te);
+	
+%second tourist
+\draw [-directEdge,dashed,color=green,line width=2pt] (Tw) to[color=green] node[pos=0.3,xshift=+8pt,yshift=-8pt] {\textbf{T2}} (Mu);
+\draw [-directEdge,color=green,line width=2pt] (Mu) to[color=green] node[pos=0.5,xshift=+0pt,yshift=10pt] {\textbf{T2}} (Ch);
+\draw [-directEdge,color=green,line width=2pt] (Te) to[color=green] node[pos=0.5,xshift=+0pt,yshift=16pt] {\textbf{T2}} (Ga);
+
+%third tourist
+\draw [-directEdge,dashed,color=blue,line width=2pt] (Ga) to[color=blue] node[pos=0.5,xshift=+0pt,yshift=7pt] {\textbf{T3}} (Ch);
+\draw [-directEdge,color=blue,line width=2pt] (Ch) to[color=blue] node[pos=0.2,xshift=-11pt,yshift=0pt] {\textbf{T3}} (Tw);

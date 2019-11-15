@@ -1,0 +1,58 @@
+\section{Background}
+
+\subsection{}
+\begin{frame}{Point Algebra and ORD-Horn Subalgebra}
+
+	\begin{itemize}
+		\item \textbf{Point Algebra (PA)}:
+			\begin{itemize}
+				\item 3 basic relations ($<$, $=$, $>$);
+				\item $2^3 = 8$ total relations (basic relations plus $\leq$,$\geq$, $\not =$, $\top$ and the empty relation $\bot$);
+				\item Consistency checking: $O(n^2)$ by van Beek algorithm;
+			\end{itemize}
+			
+		\item \textbf{Interval Algebra (IA)}: 
+			\begin{itemize}
+				\item 13 basic relations ({\footnotesize \iab{}, \iabi{}, \iam{}, \iami{}, \iao{}, \iaoi{}, \iad{}, \iadi{}, \ias{}, \iasi{}, \iaf{}, \iafi{}, \iaeq{}});
+				\item $2^{13}=8192$ total relations;
+				\item Consistency checking: NP-complete;
+			\end{itemize}
+		
+		\item \textbf{ORD-Horn Subalgebra of IA}: 
+			\begin{itemize}
+				\item Unique maximal tractable subalgebra with all basic relations;
+				\item each constraint can be converted in a set of disjunctions of PA-constraints;
+				\item 868 total relations (included $\bot$ and $\top$);
+				\item Consistency checking: $O(n^3)$ by PC, $O(c \cdot n)$ by \OHSAT{} [Gerevini, AIJ 2005].
+			\end{itemize}
+	\end{itemize}
+		
+\end{frame}
+
+\subsection{}
+\begin{frame}{\tlGraph{}}
+	\begin{block}{\tlGraph{}}
+		Graph $\mathcal{G} = (V, E)$ where each vertex in $V$ represents a CSP variable, each edge in $E$ represents a PA constraint in the CSP. Edges are either directed and labeled as \sQuote{$\leq$} or \sQuote{$<$}, or undirected and labeled as \sQuote{$\not =$}.
+	\end{block}
+	
+	\begin{figure}
+		\centering
+		\includeTikz{tlGraphExample}[0.5]
+	\end{figure}
+
+\end{frame}
+
+\subsection{}
+\begin{frame}{Static Algorithm for PA}
+
+	\textbf{van Beek algorithm}:
+	\begin{enumerate}
+		\item compute Strongly Connected Components (SCC) of the \tlGraph{} of CSP ignoring edges labeled \sQuote{$\not =$};
+		\item return \dQuote{inconsistency} if it exists an edge labeled with either \sQuote{$<$} or \sQuote{$\not =$} s.t. both source and sink belongs to the same SCC; \dQuote{consistency} otherwise.
+	\end{enumerate}
+
+	\begin{block}{Strongly Connected Component (SCC)}
+		A Strongly Connected Components of a directed graph $G=(V,E)$ is a maximal set of vertices $C \subseteq V$ such that for every pair of vertices $u$ and $v$ in $C$, we have both that $u$ reaches $v$ and $v$ reaches $u$.
+	\end{block}	
+	
+\end{frame}

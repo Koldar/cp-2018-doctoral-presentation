@@ -1,0 +1,215 @@
+\section{Proposed Techniques}
+
+\subsection{}
+\begin{frame}{Decremental Consistency Checking}
+	Given:
+	\begin{itemize}
+		\item[-] \small{an \textbf{inconsistent temporal CSP} \csp{} over a class of constraints
+$\cal C$};
+		\item[-] \small{a \textbf{sequence $\bm{\csp{}_{0}, ..., \csp{}_k}$ of CSPs} over $\cal C$ such that $\csp{}= \csp{}_{0}$ and $\csp{}_i$ is obtained from $\csp{}_{i-1}$ by making one constraint relaxation in $\csp{}_{i-1}$, for $i = 1, ..., k$};
+	\end{itemize}
+	\textbf{\color{blue} Decremental Consistency Checking} is the problem of \textit{iteratively deciding the consistency} of every $\csp{}_i$ starting from $\csp{}_1$ until $i = k$ or $\csp{}_i$ becomes consistent.
+	
+%	\begin{block}{Decremental Consistency}
+%		Given an inconsistent temporal CSP \csp{} over a class of constraints
+%$\mathcal{C}$ and a sequence $\csp{}_{0}, ..., \csp{}_k$ of CSPs over $\mathcal{C}$ such that $\csp{}= \csp{}_{0}$ and $\csp{}_i$ is obtained from $\csp{}_{i-1}$ by making one constraint relaxation in $\csp{}_{i-1}$, for $i = 1, ..., k$, decremental consistency checking is the problem of iteratively deciding the satisfiability of every $\csp{}_i$ starting from $\csp{}_1$ until $i = k$ or $\csp{}_i$ becomes consistent.
+%	\end{block}
+	
+	\begin{itemize}
+		\item \dpsat{}: if the CSP is over PA;
+		\item \disat{}: if the CSP is over IA.
+	\end{itemize}
+	
+	\begin{alertblock}{Theorem}
+		Given a temporal CSP \csp{} over either PA, IA or ORD-Horn, computing a minimal set of relaxations making \csp{} consistent is NP-hard.
+	\end{alertblock}
+
+\end{frame}
+
+\subsection{}
+\begin{frame}{Flawed SCCs}
+	\begin{block}{Flawed SCC}
+		Given a \tlGraph{} $\mathcal{G}$, a SCC $\scc{}$ is flawed if the graph induced by $\scc{}$ in $\mathcal{G}$ \induced{\scc{}}{\mathcal{G}} contains at least a flawed edge, \ie{} an edge labeled either \sQuote{$<$} or \sQuote{$\not =$}.
+	\end{block}
+
+	\begin{itemize}
+		\item $\fsccs{}$: set of all the flawed SCCs in $\mathcal{G}$;
+		\item $\elt{} = \{ \tuple{v,w} :  v,w \in \scc{} \mbox{ and } \edge{v}{<}{w} \in \mathcal{G}\}$, with $\scc{} \in \fsccs{}$;
+		\item $\eneq{} = \{ \tuple{v,w} :  v,w \in \scc{} \mbox{ and } \edge{v}{\not =}{w} \in \mathcal{G}\}$, with $\scc{} \in \fsccs{}$.
+	\end{itemize}
+
+	\begin{figure}
+		\centering
+		\includeTikz{flawedSCCExample}[0.5]
+	\end{figure}
+	
+\end{frame}
+
+\subsection{}
+\begin{frame}{Idea of \DPASAT{} algorithm}
+
+	\begin{itemize}
+		\item A CSP over PA is consistent iff $\fsccs{} = \emptyset$;
+		\item $\fscc{} \in \fsccs{}$ is flawed iff $|\elt{}|>0 \lor |\eneq{}|>0$;
+		\item Revision/removal of edges outside flawed SCC do not alter CSP consistency.
+	\end{itemize}
+
+	\begin{exampleblock}{Algorithm sketch}
+		Compute the SCCs once. At each relaxation constraint, mantain $\fsccs{}$, $\elt[\fscc{}]$, $\eneq[\fscc{}]$ (with $\fscc{} \in \fsccs{}$) over the constraint relaxation sequence and exploit them to quickly check consistency; return \dQuote{consistency} if $\fsccs{} = \emptyset$, \dQuote{inconsistency} otherwise.
+	\end{exampleblock}
+		
+\end{frame}
+	
+\subsection{}
+\begin{frame}{Idea of \DPASAT{}}
+	\framesubtitle{Maintenance of \elt[\fscc{}] and \eneq[\fscc{}]}
+	
+	Given a constraint relaxation $xR'y$ of constraint $xRy$ between time variables in the same  flawed SCC $\fscc{}$:
+	
+	\begin{table}
+		\begin{tabular}{cc||c|c|c}
+			$R$			& $R'$		& May break \scc{}?	& action on $\elt{}$ & action on $\eneq{}$ \\ \hline
+			$\leq$		& $\top$	& yes				& 					 & \\
+			$<$			& $\leq$	& no				& remove $\tuple{x, y}$					 & \\
+			$\not =$	& $\top$	& no				&					 & remove $\tuple{x, y}$ \\
+			$<$			& $\not =$ 	& yes				& remove $\tuple{x, y}$ & add $\tuple{x, y}$ \\
+			$<$			& $\top$	& yes				& remove $\tuple{x, y}$ & \\
+		\end{tabular}
+	\end{table}
+	
+	\begin{itemize}
+		\item if \elt[\fscc{}] and \eneq[\fscc{}] become $\emptyset$ or if $\fscc{}$ breaks, remove $\fscc{}$ from $\fsccs{}$;
+		\item SCC breaking efficiently checked by a modified version of Tarjan's algorithm.
+	\end{itemize}
+	
+%	\begin{itemize}
+%		\item $R=$\sQuote{$\leq$}$; R'=$\sQuote{$\top$}: may break \scc{} $\Rightarrow$ recompute flawed SCCs in $\induced{\scc{}}{\mathcal{G}}$;
+%		\item $R=$\sQuote{$\not =$}$; R'=$\sQuote{$\top$}$ \lor R=$\sQuote{$<$}$; R'=$\sQuote{$\leq$}: can't break \scc{} but can make \scc{} valid;
+%		\item $R=$\sQuote{$<$}$; R'=$\sQuote{$\noteq$}: may break \scc{} $\Rightarrow$ recompute flawed SCCs in $\induced{\scc{}}{\mathcal{G}}$;
+%		\item $R=$\sQuote{$<$}$; R'=$\sQuote{$\top$}: may break \scc{}. If \edge{x}{R}{y} was the last flaw in \scc{} no need to recompute flawed SCCs; otherwise recompute flawed SCCs in $\induced{\scc{}}{\mathcal{G}}$;
+%	\end{itemize}
+	
+\end{frame}
+
+\subsection{}
+\begin{frame}{Flawed SCC breaking example}
+
+	\begin{columns}
+		\begin{column}{1.0\textwidth}
+			\centering
+			$R=\sQuote{<} \Rightarrow R'=\sQuote{\top}$
+		\end{column}
+	\end{columns}
+
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\begin{figure}
+				\centering				
+				\includeTikz{sccSplittingExample.before.2}[0.65]
+			\end{figure}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\includeTikz{sccSplittingExample.after.2}[0.65]
+			\end{figure}
+		\end{column}
+	\end{columns}
+
+\end{frame}
+
+\subsection{}
+\begin{frame}{Static Algorithm for ORD-Horn}
+	Translate \csp{} into $\SigmaOne{} \cup \SigmaTwo{}$ [Nebel, JACM 1995]:
+	\begin{itemize}
+		\item $\SigmaOne{}$: set of PA-constraints;
+		\item $\SigmaTwo{}$: set of binary disjuncts of constraints in $\{\not =, \leq\}$;
+	\end{itemize}
+	
+	\begin{figure}[htb]
+		\centering
+		\scalebox{0.75}{
+			\begin{algorithm}[H]
+				%options
+				\renewcommand{\AlCapSty}{\ignore}
+				\SetAlgoLined
+				\LinesNumbered
+				\SetNlSty{}{}{:}
+				\SetAlgoNlRelativeSize{1}
+				\SetAlgoNoEnd
+				\DontPrintSemicolon
+				\SetArgSty{}
+				\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+				
+				%algorithm start
+				\BlankLine
+				%$\SigmaOne{} \leftarrow \piOne[\csp]; \; \SigmaTwo{} \leftarrow \piTwo[\csp{}]; \; C \leftarrow \emptyset$ \;
+				$C \leftarrow \emptyset$ \;
+				\Repeat{$D$ is empty}{
+					\lIf{$\SigmaOne{}$ is unsatisfiable}{
+						\Return $\false{}$
+					}
+					$C' \leftarrow $ SCCs of the \tlGraph{} of $\SigmaOne{}$ \;
+					\lIf{$C' = C$}{
+						\Return $\true{}$
+					}
+					\ForEach{$\delta$ in $\SigmaTwo{}$ and \textbf{each} disjunct $p \noteq q$ of $\delta$}{ \label{ln:ohsat:foreach:start}
+						\If{$p$ and $q$ are both in a component of $C'$}{
+							remove $p \noteq q$ from $\delta$ in $\Sigma_2$ \;
+						} 
+						\lIf{$\delta$ becomes empty clause}{
+							\Return $\false{}$ 
+						}
+					} \label{ln:ohsat:foreach:end}
+					$D \leftarrow$ set of reduced disjunctions derived by steps \ref{ln:ohsat:foreach:start}--\ref{ln:ohsat:foreach:end} \;
+					\If{$D$ is not empty}{
+						$\SigmaOne{} \leftarrow \SigmaOne{} \cup D; \; \SigmaTwo{} \leftarrow \SigmaTwo{} \setminus D; \; C \leftarrow C'$ \;
+					}
+				}
+				\Return $\true{}$ \;
+				\caption{\OHSAT{}$(\csp{})$ [Gerevini, AIJ 2005]}
+			\end{algorithm}
+		}
+	\end{figure}
+	
+\end{frame}
+
+\subsection{}
+\begin{frame}{Idea of \DOHSAT{} algorithm (1)}
+	\framesubtitle{High-level overview}
+
+	\begin{itemize}
+		\item \OHSAT{} iteratively performs several disjunction reductions. We call each iteration \textit{reduction epoch} $\epoch{}$;
+		\item The \textit{reduction chain} $\chain{}$ represents the sequence of reductions epochs $\epoch{}_1, \epoch{}_2, ... \epoch{}_{|\chain{}|}$ generated by \OHSAT{}$(\csp{})$.
+	\end{itemize}
+	
+	A constraint relaxation $xR'y$ of ORD-Horn constraint $xRy$ can require relaxing constraints in $\SigmaOne{}$ and either:
+	\begin{itemize}
+		\item adding new disjunctions in $\SigmaTwo{}$;
+		\item removing previous disjunctions in $\SigmaTwo{}$.
+	\end{itemize}
+	
+	Each reduction epoch $\epoch{}$ can be represented through:
+	\begin{itemize}
+		\item the set of SCCs used to make the disjunction reduction in $\epoch{}$;
+		\item the set of unary clauses (PA-constraints) generated by the disjunction reductions;
+		\item efficient data structures used to represent these datasets.
+	\end{itemize}
+
+\end{frame}
+
+\subsection{}
+\begin{frame}{Idea of \DOHSAT{} algorithm (2)}
+	\framesubtitle{Decremental version of \OHSAT{}}
+	
+	$\csp{}' = \csp{}$ with $xRy$ relaxed into $xR'y$	
+	
+	\begin{enumerate}
+		\item {\color{blue} use \DPASAT{}} to perform constraint relaxations in $\SigmaOne$;
+		\item if $\SigmaOne$ is inconsistent, return \dQuote{inconsistency};
+		\item {\color{blue} identify a subchain $\epoch{}_1, ... \epoch{}_h$ of the reduction epochs} $\chain{}$ that would also be generated by \OHSAT{}$(\csp{}')$;
+		\item apply the disjunction reductions in $\epoch{}_1, ... \epoch{}_h$ modifying $\SigmaOne{}$ and $\SigmaTwo$;
+		\item run \OHSAT{} starting with the revised $\SigmaOne{}$ and $\SigmaTwo$.
+	\end{enumerate}
+	
+\end{frame}

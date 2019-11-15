@@ -1,0 +1,58 @@
+\section{Introduction}
+
+\subsection{Introduction}
+\begin{frame}{Introduction}
+	\begin{itemize}
+		\item In constraint-based temporal reasoning, most techniques deal with static or incremental consistency, but \textbf{decremental consistency} has not been investigated yet:
+		\begin{itemize}
+			\item Given an \textit{in}consistent CSP and a sequence of constraint relaxations, it is the problem of determining if the revised CSP becomes consistent after each relaxation
+		\end{itemize}
+		
+		\item \textbf{Goal}: efficient consistency checking algorithms exploiting decremental problem to amortize complexity over constraint relaxations;
+		
+		\item \textbf{Results}: developed new decremental algorithms for PA and ORD-Horn subalgebra; experimental results show substantial time gains can be achieved over the static algorithms.
+	\end{itemize}
+\end{frame}
+
+\subsection{Motivation}
+\begin{frame}{Motivation}
+	\framesubtitle{A simple example}
+	\begin{itemize}
+		\item Applications merging qualitative temporal constraints (expressing preferences, beliefs or noisy information) may lead to an \textit{in}consistent CSP which needs to be revised.
+	\end{itemize}
+	
+	\begin{columns}
+		\begin{column}{0.5\textwidth}
+			\centering
+			$<$-constraint graph
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\centering
+			A solution after relaxations
+		\end{column}
+	\end{columns}	
+	
+	\begin{columns}
+		\column{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\includeTikz{touristExample.ia.before.6}[0.5]
+			\end{figure}
+		\column{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\includeTikz{touristExample.ia.before.6.solution}[0.5]
+			\end{figure}
+	\end{columns}
+	
+	\begin{table}
+		\footnotesize
+		\centering
+		\begin{tabular}{l|ccccccc}
+		\hline
+		Acronym	& Mu		& Tw	& Ch		& Lu	& Te		& Ca		& Ga		\\ \hline
+		Name	& Museum	& Tower	& Church	& Lunch	& Temple	& Castle	& Garden	\\ \hline
+		\end{tabular}
+	\end{table}
+	
+\end{frame}

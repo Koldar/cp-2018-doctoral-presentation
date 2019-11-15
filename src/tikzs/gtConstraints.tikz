@@ -1,0 +1,39 @@
+\tikzstyle{vertex} = [
+	shape=circle,  
+	draw=blue!50, %draw the border to the node
+	fill=blue!20, %fill the space of the node
+	thick,
+	minimum size=4mm, %minimum size of the nodes
+	distance=1cm
+];
+\pgfarrowsdeclare{directEdge}{directEdge}{%
+	\arrowsize=0.2pt
+	\advance\arrowsize by .5\pgflinewidth
+	\pgfarrowsleftextend{-4\arrowsize-.5\pgflinewidth}
+	\pgfarrowsrightextend{.5\pgflinewidth}
+}{%
+	\arrowsize=1pt
+	\advance\arrowsize by .5\pgflinewidth
+	\pgfsetdash{}{0pt} % do not dash
+	\pgfsetroundjoin % fix join
+	\pgfsetroundcap % fix cap
+	\pgfpathmoveto{\pgfpointorigin}
+	\pgfpathlineto{\pgfpoint{-6\arrowsize}{2.2\arrowsize}}
+	\pgfpathlineto{\pgfpoint{-6\arrowsize}{-2.2\arrowsize}}
+	\pgfpathclose
+	\pgfusepathqfill
+}
+
+\begin{scope}[scale=1.0,shift={(-1,0)}]
+	\node[vertex](X) at (0,+1) {X};
+	\node[vertex](Y) at (0,-1) {Y};
+	
+	\draw [-directEdge] (X) to[] node[pos=0.5,xshift=-1pt,yshift=0pt] {$>$} (Y);
+\end{scope}
+
+\begin{scope}[scale=1.0,shift={(+1,0)}]
+	\node[vertex](X) at (0,+1) {X};
+	\node[vertex](Y) at (0,-1) {Y};
+
+	\draw [-directEdge] (Y) to[] node[pos=0.5,xshift=-1pt,yshift=0pt] {$<$} (X);
+\end{scope}
